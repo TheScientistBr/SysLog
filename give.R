@@ -1,22 +1,35 @@
 library("lubridate")
 library("stringr")
+library("stringi")
 
 files <- list.files(path = "//cronos04/C$/SAS/Config/Lev1/Web/WebAppServer/SASServer12_1/logs",
                     pattern = "localhost*")
 dates <- as.Date(str_sub(string = files,start = 22,end = 31))
 
 files <- data.frame(date=dates,file = files,stringsAsFactors = F)
+files <- subset(x = files,subset = date >= "2019-01-01")
 
-df <- subset.data.frame(x = files,subset = date > "2019-01-01")
+df <- data.frame()
 
+for(i in 1:length(files$date)){
+        dff <- read.delim(paste0("//cronos04/C$/SAS/Config/Lev1/Web/WebAppServer/SASServer12_1/logs/",files$file[i]))
+        names(dff) <- c("linha")
+        df <- rbind(dff,df)
+}
 
-df_temp <- data.frame()
+df$linha <- as.character(df$linha)
 
-i <- 16694
+lixo <- stri_subset_regex(str = df,pattern = "/Unimed_Vix/Analytics")
 
-for(i in grep(df$X3,pattern = "/Unimed_Vix/Analytics")) {
-        desc <- strsplit(x = df$X3[i],split = "/")
-        l1 <- desc[[1]][10]
+for(i in grepl(df,pattern = "/Unimed_Vix/Analytics")) {
+        dia <- substr(x = df$linha[1],start = 22,stop = 32)
+        dia <- as.vector(strsplit(dia,split = "/"))
+        dia[[1]][2] <- match(dia[[1]][2],month.abb)
+        dia[[1]][2] <- ifelse(as.integer(dia[[1]][2])< 10, paste0("0",dia[[1]][2]),dia[[1]][2])
+        dia <- mdy(paste0(dia[[1]][1],"-",dia[[1]][2],"-",dia[[1]][3]))
+        
+        desc <- strsplit(x = df$linha[i],split = "/")
+        l1 <- desc[[1]][15]
         l2 <- desc[[1]][11]
         l3 <- desc[[1]][12]
         l3 <- str_remove(l3,"HTTP")
