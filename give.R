@@ -26,16 +26,16 @@ library("urltools")
 
 df_temp <- data.frame()
 
-df <- stri_subset_regex(str = df[[1]],pattern = "Unimed_Vix")
+dff <- data.frame(linha = stri_subset_regex(str = df[[1]],pattern = "Unimed_Vix"),stringsAsFactors = F)
 
-for(i in 1:length(df)) {
-        dia <- substr(x = df,start = 22,stop = 32)
+for(i in 1:length(dff$linha)) {
+        dia <- substr(x = dff[[1]][i],start = 22,stop = 32)
         dia <- as.vector(strsplit(dia,split = "/"))
         dia[[1]][2] <- match(dia[[1]][2],month.abb)
         dia[[1]][2] <- as.character(ifelse(as.integer(dia[[1]][2])< 10, paste0("0",dia[[1]][2]),dia[[1]][2]))
         dia <- dmy(paste0(dia[[1]][1],"-",dia[[1]][2],"-",dia[[1]][3]))
 
-        desc <- url_decode(df)
+        desc <- url_decode(dff[[1]][i])
         desc <- sub('.*Unimed_Vix/', '', desc)
         desc <- sub('&.*', '', desc)
         Encoding(desc) <- "UTF-8"
@@ -52,7 +52,7 @@ names(df1) <- c("l1","f")
 df1 <- df1[order(df1$f,decreasing = T),]
 df1 <- subset(x = df1,subset = f > max(df1$f)*.01)
 par(mar=c(11,4,4,4))
-barplot(df1$f,names.arg = df1$l1,cex.names=0.8,las=2,col = "darkgreen")
+mybar <- barplot(df1$f,names.arg = df1$l1,cex.names=0.8,las=2,col = "darkgreen")
 text(mybar, df1$f,df1$f, xpd=TRUE, col = "green")
 
 df2 <- aggregate(df_temp$n ~ df_temp$l2,data = df_temp,FUN = sum)
