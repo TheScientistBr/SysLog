@@ -28,14 +28,14 @@ df_temp <- data.frame()
 
 df <- stri_subset_regex(str = df[[1]],pattern = "Unimed_Vix")
 
-for(i in 1:df$) {
-        dia <- substr(x = dff,start = 22,stop = 32)
+for(i in 1:length(df)) {
+        dia <- substr(x = df,start = 22,stop = 32)
         dia <- as.vector(strsplit(dia,split = "/"))
         dia[[1]][2] <- match(dia[[1]][2],month.abb)
         dia[[1]][2] <- as.character(ifelse(as.integer(dia[[1]][2])< 10, paste0("0",dia[[1]][2]),dia[[1]][2]))
         dia <- dmy(paste0(dia[[1]][1],"-",dia[[1]][2],"-",dia[[1]][3]))
 
-        desc <- url_decode(dff)
+        desc <- url_decode(df)
         desc <- sub('.*Unimed_Vix/', '', desc)
         desc <- sub('&.*', '', desc)
         Encoding(desc) <- "UTF-8"
