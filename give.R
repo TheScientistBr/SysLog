@@ -26,7 +26,9 @@ library("urltools")
 
 df_temp <- data.frame()
 
-for(dff in stri_subset_regex(str = df[[1]],pattern = "Unimed_Vix")) {
+df <- stri_subset_regex(str = df[[1]],pattern = "Unimed_Vix")
+
+for(i in 1:df$) {
         dia <- substr(x = dff,start = 22,stop = 32)
         dia <- as.vector(strsplit(dia,split = "/"))
         dia[[1]][2] <- match(dia[[1]][2],month.abb)
